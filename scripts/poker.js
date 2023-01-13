@@ -14,20 +14,24 @@ class Card {
 }
 
 class Game {
+    //TODO: Härifrån ska hela spelet köras sen 
+}
+
+//TODO: Flytta all info om kortleken hit 
+class Deck {
     constructor() {
         this.suits = ["spades", "diamonds", "clubs", "hearts"];
-        //Högre index = högre värde på kortet
+        //Högre index = högre värde på kortet (läggs till i loopen nedan)
         this.values = ["2", "3", "4", "5", "6", "7", "8", "9", "10", "Jack", "Queen", "King", "Ace"];
         this.deck = [];
-    }
-    createDeck = function() {
+        //Generating the deck 
         for (let i = 0; i < this.suits.length; i++) {
             for (let x = 0; x < this.values.length; x++) {
                 let card = new Card(this.suits[i], this.values[x], (x+ 1)); //+1 på x för att ett kort inte ska ha värdet 0
                 this.deck.push(card); 
             }
         }
-        return this.deck; 
+        this.throwStack = []; 
     }
 }
 
@@ -37,30 +41,32 @@ class Player {
         this.handOfCards = []
     }
 
-    //Method: print cards
+    
     printCards = function() {
         const listOfCards = this.handOfCards.map(card => card.description); 
         console.log(`The cards of ${this.name} are: ${listOfCards.join(", ")}`); 
     }
-    //Method: print value of cards
+    
     printCardsValue = function() {
         let cardsTotalValue = 0; 
         this.handOfCards.forEach(card => {
             cardsTotalValue += card.cardWorth; 
         });
-        console.log(`${this.name}s totalt card value is: ${cardsTotalValue}`); 
+        console.log(`${this.name}s total card value is: ${cardsTotalValue}`); 
     }
+
 }
 
 class Dealer {
-    //Skicka med resultatet av metoden createDeck() från Game
-    constructor(currentDeck) {
-        this.currentDeck = currentDeck; 
+    
+    constructor() {
+        //Note to self: är en array med objekt nu - för att komma åt deck-arrayen blir "sökvägen" currentdeck.deck
+        this.currentDeck = new Deck(); 
     }
 
     shuffleDeck = function() {
         //The Fisher-Yates shuffle
-        let currentIndex = this.currentDeck.length; 
+        let currentIndex = this.currentDeck.deck.length; 
         let randomIndex; 
         let currentLastCard; 
 
@@ -70,37 +76,65 @@ class Dealer {
             currentIndex--; 
 
             //Swap it with the current last remaining element
-            currentLastCard = this.currentDeck[currentIndex]; 
-            this.currentDeck[currentIndex] = this.currentDeck[randomIndex]; 
-            this.currentDeck[randomIndex] = currentLastCard; 
+            currentLastCard = this.currentDeck.deck[currentIndex]; 
+            this.currentDeck.deck[currentIndex] = this.currentDeck.deck[randomIndex]; 
+            this.currentDeck.deck[randomIndex] = currentLastCard; 
         }
         return this.currentDeck; 
     }
 
-    dealCards = function (player) {
-        const cardsToDeal = this.currentDeck.splice(0, 5); 
-        player.handOfCards = cardsToDeal; 
+    dealCards = function (player, numOfCards) {
+        const cardsToDeal = this.currentDeck.deck.splice(0, numOfCards); 
+        if (player.handOfCards.length != 0) {
+            player.handOfCards = player.handOfCards.concat(cardsToDeal); 
+        }
+        else {
+            player.handOfCards = cardsToDeal;
+        }
+    }
+
+    throwCards = function (player, numOfCards) {
+        this.currentDeck.throwStack = player.handOfCards.splice(0, numOfCards);
     }
 
     printDeck = function () {
-        console.log(this.currentDeck); 
+        console.log(this.currentDeck.deck); 
     }
 }
 
 //Playing the game 
-const roundOne = new Game(); 
-const testDealer = new Dealer(roundOne.createDeck()); 
-let playerOne = new Player("Slim"); 
-let playerTwo = new Player("Luke"); 
 
+const dealerOne = new Dealer(); 
 
+const playerOne = new Player("Slim"); 
+const playerTwo = new Player("Luke"); 
 
-testDealer.shuffleDeck(); 
-testDealer.dealCards(playerOne); 
-testDealer.dealCards(playerTwo); 
+dealerOne.shuffleDeck(); 
+
+dealerOne.dealCards(playerOne, 5); 
+dealerOne.dealCards(playerTwo, 5); 
+
 playerOne.printCards(); 
 playerTwo.printCards(); 
+
 playerOne.printCardsValue(); 
 playerTwo.printCardsValue(); 
 
 
+dealerOne.throwCards(playerOne, 2); 
+dealerOne.throwCards(playerTwo, 2); 
+
+
+playerOne.printCards(); 
+playerTwo.printCards(); 
+
+dealerOne.dealCards(playerOne, 2); 
+dealerOne.dealCards(playerTwo, 2); 
+
+playerOne.printCards(); 
+playerTwo.printCards(); 
+
+dealerOne.printDeck();
+
+playerOne.printCardsValue(); 
+playerTwo.printCardsValue(); 
