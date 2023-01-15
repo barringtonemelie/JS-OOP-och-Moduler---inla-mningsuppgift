@@ -4,6 +4,10 @@ Four suits: clubs (all black), diamonds(all red), hearts(all red), spades (all b
 Each suit includes 13 cards: Numerical cards from 1 to 10, Jack, Queen, King and Ace. 
 */ 
 
+class Game {
+    //TODO: Härifrån ska hela spelet köras sen 
+}
+
 class Card {
     constructor(suit, value, cardWorth) {
         this.suit = suit; 
@@ -11,10 +15,6 @@ class Card {
         this.cardWorth = cardWorth; 
         this.description = `${this.value} of ${this.suit}`; 
     }
-}
-
-class Game {
-    //TODO: Härifrån ska hela spelet köras sen 
 }
 
 class Deck {
@@ -46,14 +46,14 @@ class Player {
         console.log(`The cards of ${this.name} are: ${listOfCards.join(", ")}`); 
     }
     
-    //Prints the value of the players current hand of cards to the console
-    printCardsValue = function() {
-        let cardsTotalValue = 0; 
-        this.handOfCards.forEach(card => {
-            cardsTotalValue += card.cardWorth; 
-        });
-        console.log(`${this.name}s total card value is: ${cardsTotalValue}`); 
-    }
+    //Denna behövs inte längre efter del 6 och validation-klassen
+    // printCardsValue = function() {
+    //     let cardsTotalValue = 0; 
+    //     this.handOfCards.forEach(card => {
+    //         cardsTotalValue += card.cardWorth; 
+    //     });
+    //     console.log(`${this.name}s total card value is: ${cardsTotalValue}`); 
+    // }
 
 }
 
@@ -109,6 +109,18 @@ class Dealer {
     }
 }
 
+class Validation {
+    static validatePlayersCards (players) {
+        players.forEach(player => {
+            let totalCardWorth = 0; 
+            player.handOfCards.forEach(card => {
+                totalCardWorth += card.cardWorth; 
+            });
+            console.log(`${player.name}s total card value is: ${totalCardWorth}`); 
+        });
+    }
+}
+
 //Playing the game 
 
 const dealerOne = new Dealer(); 
@@ -126,41 +138,8 @@ dealerOne.dealCards(playerTwo, 5);
 playerOne.printCards(); 
 playerTwo.printCards(); 
 
-playerOne.printCardsValue(); 
-playerTwo.printCardsValue(); 
+//Denna ska senare vara en del av Game-klassen 
+let playerList = [playerOne, playerTwo]; 
 
+Validation.validatePlayersCards(playerList); 
 
-dealerOne.throwCards(playerOne, 2); 
-dealerOne.throwCards(playerTwo, 2); 
-
-
-playerOne.printCards(); 
-playerTwo.printCards(); 
-
-dealerOne.dealCards(playerOne, 2); 
-dealerOne.dealCards(playerTwo, 2); 
-
-playerOne.printCards(); 
-playerTwo.printCards(); 
-
-dealerOne.printDeck();
-
-playerOne.printCardsValue(); 
-playerTwo.printCardsValue(); 
-
-dealerOne.throwCards(playerOne, 5); 
-dealerOne.throwCards(playerTwo, 5); 
-
-playerOne.printCardsValue(); 
-playerTwo.printCardsValue(); 
-
-dealerOne.returnThrowCards(); 
-
-dealerOne.printDeck(); 
-
-
-dealerOne.shuffleDeck(); 
-dealerOne.printDeck(); 
-
-dealerOne.shuffleDeck(); 
-dealerOne.printDeck(); 
