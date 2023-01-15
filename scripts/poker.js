@@ -4,9 +4,7 @@ Four suits: clubs (all black), diamonds(all red), hearts(all red), spades (all b
 Each suit includes 13 cards: Numerical cards from 1 to 10, Jack, Queen, King and Ace. 
 */ 
 
-class Game {
-    //TODO: Härifrån ska hela spelet köras sen 
-}
+
 
 class Card {
     constructor(suit, value, cardWorth) {
@@ -38,6 +36,7 @@ class Player {
     constructor(name) {
         this.name = name; 
         this.handOfCards = []
+        this.totalCardWorth = 0; 
     }
 
     //Prints the players current hand of cards to the console
@@ -45,15 +44,6 @@ class Player {
         const listOfCards = this.handOfCards.map(card => card.description); 
         console.log(`The cards of ${this.name} are: ${listOfCards.join(", ")}`); 
     }
-    
-    //Denna behövs inte längre efter del 6 och validation-klassen
-    // printCardsValue = function() {
-    //     let cardsTotalValue = 0; 
-    //     this.handOfCards.forEach(card => {
-    //         cardsTotalValue += card.cardWorth; 
-    //     });
-    //     console.log(`${this.name}s total card value is: ${cardsTotalValue}`); 
-    // }
 
 }
 
@@ -111,35 +101,68 @@ class Dealer {
 
 class Validation {
     static validatePlayersCards (players) {
+
+        let previousPlayerValue = 0; 
+        let winner = ""; 
+
         players.forEach(player => {
-            let totalCardWorth = 0; 
             player.handOfCards.forEach(card => {
-                totalCardWorth += card.cardWorth; 
+                player.totalCardWorth += card.cardWorth; 
             });
-            console.log(`${player.name}s total card value is: ${totalCardWorth}`); 
+
+            console.log(`${player.name}s total card value is: ${player.totalCardWorth}`); 
+
+            if (previousPlayerValue < player.totalCardWorth) {
+                previousPlayerValue = player.totalCardWorth; 
+                winner = player.name; 
+            }
         });
+        
+        console.log(`And the winner is: ${winner}`); 
     }
 }
 
-//Playing the game 
+class Game {
+    constructor() {
+        this.playerList = []; 
+        this.dealer = new Dealer(); 
+    }
 
-const dealerOne = new Dealer(); 
+    addPlayers = function () {
+        console.log("Please enter number of players (at least two) and names of players."); 
+        //TODO: Använda formulär eller popup för att be spelaren skriva in informationen? Väntar svar från Sandra
+    }
 
-const playerOne = new Player("Slim"); 
-const playerTwo = new Player("Luke"); 
+    startGame = function (numOfPlayers, playerNames, numOfRounds) {
+        //Kör spelet en gång om rounds inte är angivna 
+        if (numOfRounds === undefined) {
+            //Skapa spelare och lägg in i this.playerList 
+            for (let i = 0; i < numOfPlayers; i++) {
+                this.playerList.push(new Player(playerNames[i])); 
+            }
 
-dealerOne.shuffleDeck(); 
+            //Ge spelarna varsin hand
+            this.dealer.shuffleDeck(); 
+            this.playerList.forEach(player => {
+                this.dealer.dealCards(player, 5); 
+                player.printCards(); 
+            });
 
-dealerOne.printDeck(); 
+            //Validerar korten och skriver ut vinnaren 
+            Validation.validatePlayersCards(this.playerList); 
+        }
+        //Kör spelet i flera omgångar enligt input
+        else {
+            
+        }
 
-dealerOne.dealCards(playerOne, 5); 
-dealerOne.dealCards(playerTwo, 5); 
+        
 
-playerOne.printCards(); 
-playerTwo.printCards(); 
+    }
+    
+}
 
-//Denna ska senare vara en del av Game-klassen 
-let playerList = [playerOne, playerTwo]; 
-
-Validation.validatePlayersCards(playerList); 
-
+const game = new Game();
+//Ska denna array anges av användaren? 
+const names = ["Britt", "Ulla", "Berit"]; 
+game.startGame(3, names); 
