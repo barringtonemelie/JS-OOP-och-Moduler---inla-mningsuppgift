@@ -134,13 +134,13 @@ class Game {
     }
 
     startGame = function (numOfPlayers, playerNames, numOfRounds) {
+        //Skapa spelare och lägg in i this.playerList 
+        for (let i = 0; i < numOfPlayers; i++) {
+            this.playerList.push(new Player(playerNames[i])); 
+        }
+
         //Kör spelet en gång om rounds inte är angivna 
         if (numOfRounds === undefined) {
-            //Skapa spelare och lägg in i this.playerList 
-            for (let i = 0; i < numOfPlayers; i++) {
-                this.playerList.push(new Player(playerNames[i])); 
-            }
-
             //Ge spelarna varsin hand
             this.dealer.shuffleDeck(); 
             this.playerList.forEach(player => {
@@ -151,18 +151,39 @@ class Game {
             //Validerar korten och skriver ut vinnaren 
             Validation.validatePlayersCards(this.playerList); 
         }
-        //Kör spelet i flera omgångar enligt input
+        //Kör spelet i flera omgångar enligt numOfRounds
         else {
-            
+            for (let round = 1; round <= numOfRounds; round++) {
+                console.log(`-------ROUND ${round}-------`)
+                this.dealer.shuffleDeck(); 
+
+                //Ge spelarna varsin hand
+                this.playerList.forEach(player => {
+                    this.dealer.dealCards(player, 5); 
+                    player.printCards(); 
+                });
+
+                //Slängningsrunda
+
+                //TODO: Skapa metod för att slänga specifikt kort på viss indexplats (låta spelaren välja vilket kort de ska slänga)
+                this.playerList.forEach(player => {
+                    this.dealer.throwCards(player, 2); 
+                    player.printCards(); 
+                });
+                //Nya kort efter att ha slängt två 
+                this.playerList.forEach(player => {
+                    this.dealer.dealCards(player, 2); 
+                    player.printCards(); 
+                });
+
+                //Validerar korten och skriver ut vinnaren 
+                Validation.validatePlayersCards(this.playerList);
+            }
         }
-
-        
-
     }
-    
 }
 
 const game = new Game();
 //Ska denna array anges av användaren? 
 const names = ["Britt", "Ulla", "Berit"]; 
-game.startGame(3, names); 
+game.startGame(3, names, 3); 
