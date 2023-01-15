@@ -17,7 +17,6 @@ class Game {
     //TODO: Härifrån ska hela spelet köras sen 
 }
 
-//TODO: Flytta all info om kortleken hit 
 class Deck {
     constructor() {
         this.suits = ["spades", "diamonds", "clubs", "hearts"];
@@ -41,12 +40,13 @@ class Player {
         this.handOfCards = []
     }
 
-    
+    //Prints the players current hand of cards to the console
     printCards = function() {
         const listOfCards = this.handOfCards.map(card => card.description); 
         console.log(`The cards of ${this.name} are: ${listOfCards.join(", ")}`); 
     }
     
+    //Prints the value of the players current hand of cards to the console
     printCardsValue = function() {
         let cardsTotalValue = 0; 
         this.handOfCards.forEach(card => {
@@ -83,6 +83,7 @@ class Dealer {
         return this.currentDeck; 
     }
 
+    //Deals a chosen number of cards to the players 
     dealCards = function (player, numOfCards) {
         const cardsToDeal = this.currentDeck.deck.splice(0, numOfCards); 
         if (player.handOfCards.length != 0) {
@@ -93,8 +94,14 @@ class Dealer {
         }
     }
 
+    //Let players throw away a chosen number of cards
     throwCards = function (player, numOfCards) {
-        this.currentDeck.throwStack = player.handOfCards.splice(0, numOfCards);
+        this.currentDeck.throwStack = this.currentDeck.throwStack.concat(player.handOfCards.splice(0, numOfCards));
+    }
+
+    //Add thrown cards back to deck
+    returnThrowCards = function () {
+        this.currentDeck.deck = this.currentDeck.deck.concat(this.currentDeck.throwStack); 
     }
 
     printDeck = function () {
@@ -110,6 +117,8 @@ const playerOne = new Player("Slim");
 const playerTwo = new Player("Luke"); 
 
 dealerOne.shuffleDeck(); 
+
+dealerOne.printDeck(); 
 
 dealerOne.dealCards(playerOne, 5); 
 dealerOne.dealCards(playerTwo, 5); 
@@ -138,3 +147,20 @@ dealerOne.printDeck();
 
 playerOne.printCardsValue(); 
 playerTwo.printCardsValue(); 
+
+dealerOne.throwCards(playerOne, 5); 
+dealerOne.throwCards(playerTwo, 5); 
+
+playerOne.printCardsValue(); 
+playerTwo.printCardsValue(); 
+
+dealerOne.returnThrowCards(); 
+
+dealerOne.printDeck(); 
+
+
+dealerOne.shuffleDeck(); 
+dealerOne.printDeck(); 
+
+dealerOne.shuffleDeck(); 
+dealerOne.printDeck(); 
