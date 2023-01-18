@@ -2,6 +2,8 @@
 In total 52 cards
 Four suits: clubs (all black), diamonds(all red), hearts(all red), spades (all black)
 Each suit includes 13 cards: Numerical cards from 1 to 10, Jack, Queen, King and Ace. 
+
+
 */ 
 
 
@@ -100,6 +102,8 @@ class Dealer {
 }
 
 class Validation {
+
+    //TODO: Skapa en mer verklig validering
     static validatePlayersCards (players) {
 
         let previousPlayerValue = 0; 
@@ -129,11 +133,11 @@ class Game {
     }
 
     addPlayers = function () {
-        console.log("Please enter number of players (at least two) and names of players."); 
-        //TODO: Använda formulär eller popup för att be spelaren skriva in informationen? Väntar svar från Sandra
+        console.log("Please enter number of players (at least two), number of rounds, and names of players."); 
     }
 
     startGame = function (numOfPlayers, playerNames, numOfRounds) {
+        game.addPlayers(); 
         //Skapa spelare och lägg in i this.playerList 
         for (let i = 0; i < numOfPlayers; i++) {
             this.playerList.push(new Player(playerNames[i])); 
@@ -184,6 +188,8 @@ class Game {
 }
 
 const game = new Game();
-//Ska denna array anges av användaren? 
+//Denna array anges av användaren, samt antalet spelare och hur många rundor spelet ska köras 
 const names = ["Britt", "Ulla", "Berit"]; 
-game.startGame(3, names, 3); 
+const howManyPlayers = 3; 
+const howManyRounds = 3; 
+game.startGame(howManyPlayers, names, howManyRounds); 
