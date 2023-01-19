@@ -2,10 +2,13 @@
 In total 52 cards
 Four suits: clubs (all black), diamonds(all red), hearts(all red), spades (all black)
 Each suit includes 13 cards: Numerical cards from 1 to 10, Jack, Queen, King and Ace. 
-
-
 */ 
 
+/*
+Triss: Tre kort av samma valör (vid oavgjort: 1. högsta triss, 2. högst sidokort, 3. högst andra sidokort)
+Tvåpar: Två kort av samma valör x2 (vid oavgjort: 1. högsta paret vinner, 2. högsta andra paret vinner, 3. högsta sidokortet)
+Par: Två kort av samma valör (vid oavgjort: 1. högsta paret vinner, 2. högst sidokort, 3. högst andra sidokort, 4. högst tredje sidokort)
+*/
 
 
 class Card {
@@ -45,6 +48,19 @@ class Player {
     printCards = function() {
         const listOfCards = this.handOfCards.map(card => card.description); 
         console.log(`The cards of ${this.name} are: ${listOfCards.join(", ")}`); 
+    }
+
+    sortCards = function() {
+        //Sorterar korten från lägst värde till högst
+        this.handOfCards.sort((a, b) => {
+            if (a.cardWorth < b.cardWorth) {
+                return -1; 
+            }
+            if (a.cardWorth > b.cardWorth) {
+                return 1; 
+            }
+            return 0; 
+        });
     }
 
 }
@@ -87,7 +103,9 @@ class Dealer {
     }
 
     //Let players throw away a chosen number of cards
-    throwCards = function (player, numOfCards) {
+    throwCards = function (player, numOfCards, userChoice) {
+        //Jag förutsätter att spelaren vill slänga kortet med lägst "värde" - men hade jag ett UI skulle jag ge spelaren möjlighet att välja 
+
         this.currentDeck.throwStack = this.currentDeck.throwStack.concat(player.handOfCards.splice(0, numOfCards));
     }
 
@@ -122,7 +140,7 @@ class Validation {
             }
         });
         
-        console.log(`And the winner is: ${winner}`); 
+        console.log(`~~~~~****And the winner is: ${winner}****~~~~~`); 
     }
 }
 
@@ -162,6 +180,7 @@ class Game {
                 this.dealer.shuffleDeck(); 
 
                 //Ge spelarna varsin hand
+                console.log("--dealing cards--")
                 this.playerList.forEach(player => {
                     this.dealer.dealCards(player, 5); 
                     player.printCards(); 
@@ -169,19 +188,34 @@ class Game {
 
                 //Slängningsrunda
 
-                //TODO: Skapa metod för att slänga specifikt kort på viss indexplats (låta spelaren välja vilket kort de ska slänga)
+                console.log("--throwing cards--"); 
                 this.playerList.forEach(player => {
+                    console.log(`${player.name}, please choose which cards you would like to throw.`); 
+                    //Jag förutsätter att spelaren vill slänga kortet med lägst värde - men hade jag ett UI skulle jag ge spelaren möjlighet att välja 
+                    player.sortCards(); 
+                    
                     this.dealer.throwCards(player, 2); 
                     player.printCards(); 
                 });
-                //Nya kort efter att ha slängt två 
+
+                console.log("--dealing new cards--"); 
+                //Hade jag kunnat lösa att ha dem i samma loop? Sure, om effektivitet och prestanda var viktigt, men nu blir det här snyggare kod och snyggare i konsolen :) 
                 this.playerList.forEach(player => {
+                    //Nya kort efter att ha slängt två
                     this.dealer.dealCards(player, 2); 
                     player.printCards(); 
                 });
+                
 
                 //Validerar korten och skriver ut vinnaren 
                 Validation.validatePlayersCards(this.playerList);
+
+                //Resetting the game for next round 
+                this.playerList.forEach(player => {
+                    this.dealer.throwCards(player, 5); 
+                    player.totalCardWorth = 0; 
+                });
+                this.dealer.returnThrowCards(); 
             }
         }
     }
@@ -189,7 +223,7 @@ class Game {
 
 const game = new Game();
 //Denna array anges av användaren, samt antalet spelare och hur många rundor spelet ska köras 
-const names = ["Britt", "Ulla", "Berit"]; 
-const howManyPlayers = 3; 
+const names = ["Britt", "Ulla", "Berit", "Agda"]; 
+const howManyPlayers = 4; 
 const howManyRounds = 3; 
 game.startGame(howManyPlayers, names, howManyRounds); 
