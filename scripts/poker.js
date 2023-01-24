@@ -5,13 +5,16 @@ Each suit includes 13 cards: Numerical cards from 1 to 10, Jack, Queen, King and
 */ 
 
 /*
+TODO: 
+För del 9: 
 Triss: Tre kort av samma valör (vid oavgjort: 1. högsta triss, 2. högst sidokort, 3. högst andra sidokort)
 Tvåpar: Två kort av samma valör x2 (vid oavgjort: 1. högsta paret vinner, 2. högsta andra paret vinner, 3. högsta sidokortet)
 Par: Två kort av samma valör (vid oavgjort: 1. högsta paret vinner, 2. högst sidokort, 3. högst andra sidokort, 4. högst tredje sidokort)
 */
 
 
-class Card {
+
+export class Card {
     constructor(suit, value, cardWorth) {
         this.suit = suit; 
         this.value = value; 
@@ -20,7 +23,9 @@ class Card {
     }
 }
 
-class Deck {
+
+
+export class Deck {
     constructor() {
         this.suits = ["spades", "diamonds", "clubs", "hearts"];
         //Högre index = högre värde på kortet (läggs till i loopen nedan)
@@ -37,7 +42,7 @@ class Deck {
     }
 }
 
-class Player {
+export class Player {
     constructor(name) {
         this.name = name; 
         this.handOfCards = []
@@ -65,7 +70,7 @@ class Player {
 
 }
 
-class Dealer {
+export class Dealer {
     
     constructor() {
         //Note to self: är en array med objekt nu - för att komma åt deck-arrayen blir "sökvägen" currentdeck.deck
@@ -119,9 +124,9 @@ class Dealer {
     }
 }
 
-class Validation {
+export class Validation {
 
-    //TODO: Skapa en mer verklig validering
+    //TODO: Skapa validering för par, tvåpar och triss 
     static validatePlayersCards (players) {
 
         let previousPlayerValue = 0; 
@@ -144,18 +149,18 @@ class Validation {
     }
 }
 
-class Game {
+export default class Game {
     constructor() {
         this.playerList = []; 
         this.dealer = new Dealer(); 
     }
 
-    addPlayers = function () {
+    static addPlayers = function () {
         console.log("Please enter number of players (at least two), number of rounds, and names of players."); 
     }
 
     startGame = function (numOfPlayers, playerNames, numOfRounds) {
-        game.addPlayers(); 
+        Game.addPlayers(); 
         //Skapa spelare och lägg in i this.playerList 
         for (let i = 0; i < numOfPlayers; i++) {
             this.playerList.push(new Player(playerNames[i])); 
@@ -187,7 +192,6 @@ class Game {
                 });
 
                 //Slängningsrunda
-
                 console.log("--throwing cards--"); 
                 this.playerList.forEach(player => {
                     console.log(`${player.name}, please choose which cards you would like to throw.`); 
@@ -220,10 +224,3 @@ class Game {
         }
     }
 }
-
-const game = new Game();
-//Denna array anges av användaren, samt antalet spelare och hur många rundor spelet ska köras 
-const names = ["Britt", "Ulla", "Berit", "Agda"]; 
-const howManyPlayers = 4; 
-const howManyRounds = 3; 
-game.startGame(howManyPlayers, names, howManyRounds); 
